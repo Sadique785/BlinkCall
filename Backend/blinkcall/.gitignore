@@ -1,0 +1,57 @@
+# Ignore virtual environments (if any are inside blinkcall)
+venv/
+benv/
+
+# Ignore environment variables and secrets
+.env
+*.env
+
+# Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Database files (if using SQLite for local development)
+db.sqlite3
+*.sqlite3
+
+# Logs & debug files
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# Static & media files (if collected locally)
+staticfiles/
+media/
+static/
+
+# Compiled files (if using migrations)
+*.mo
+*.pot
+
+# Django migrations (optional, if you regenerate migrations often)
+**/migrations/*.pyc
+**/migrations/*.py
+!**/migrations/__init__.py  # Keep __init__.py but ignore others
+
+# IDE/editor-related files
+.vscode/
+.idea/
+.DS_Store
+*.swp
+*.swo
+*.suo
+
+# Coverage reports
+htmlcov/
+.coverage
+*.cover
+.pytest_cache/
+nosetests.xml
+coverage.xml
+
+# Security keys (if using Django secret key storage)
+secrets.json
