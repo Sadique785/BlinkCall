@@ -1,16 +1,47 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Header from '../components/Home/Header';
 import { useNavigate } from 'react-router-dom';
-
+import axiosInstance from '../services/axios';
 
 const Register = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
   const navigate = useNavigate();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [apiError, setApiError] = useState(null);
 
-  const onSubmit = (data) => {
-    console.log(data);
-    // Handle registration logic here
+  const onSubmit = async (data) => {
+    try {
+      setIsSubmitting(true);
+      setApiError(null);
+      
+      // Send registration data to the backend
+      await axiosInstance.post('/auth/register/', {
+        username: data.username,
+        email: data.email,
+        password: data.password
+      });
+      
+      // Redirect to login after successful registration
+      navigate('/login', { 
+        state: { message: 'Registration successful! Please login with your credentials.' }
+      });
+      
+    } catch (error) {
+      console.log(error)
+      // Handle registration errors
+      if (error.response?.data?.detail) {
+        setApiError(error.response.data.detail);
+      } else if (error.response?.data) {
+        // Handle validation errors from serializer
+        const errorMessage = Object.values(error.response.data)[0];
+        setApiError(Array.isArray(errorMessage) ? errorMessage[0] : errorMessage);
+      } else {
+        setApiError('Registration failed. Please try again later.');
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -34,6 +65,12 @@ const Register = () => {
                 className="h-16 w-auto object-contain mx-auto"
               />
             </div>
+
+            {apiError && (
+              <div className="mb-4 p-3 bg-red-500/30 border border-red-500 rounded-lg text-white text-sm">
+                {apiError}
+              </div>
+            )}
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               <div>
@@ -99,29 +136,37 @@ const Register = () => {
                 )}
               </div>
 
-              <div className="flex items-center text-sm">
-                <label className="flex items-center text-white">
-                  <input type="checkbox" className="mr-2" />
-                  I agree to the Terms of Service and Privacy Policy
-                </label>
-              </div>
-
               <button
                 type="submit"
-                className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors duration-200"
+                disabled={isSubmitting}
+                className={`w-full py-3 px-4 ${
+                  isSubmitting 
+                    ? 'bg-blue-400 cursor-not-allowed' 
+                    : 'bg-blue-600 hover:bg-blue-700'
+                } text-white rounded-lg font-medium transition-colors duration-200 flex justify-center items-center`}
               >
-                Sign Up
+                {isSubmitting ? (
+                  <>
+                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Processing...
+                  </>
+                ) : (
+                  'Sign Up'
+                )}
               </button>
 
               <p 
                 className="text-center text-white text-sm cursor-pointer"
                 onClick={() => navigate('/login')}
-                >
+              >
                 Already have an account?{' '}
                 <span className="text-blue-400 hover:text-blue-300">
-                    Login
+                  Login
                 </span>
-                </p>    
+              </p>    
             </form>
           </div>
         </div>
