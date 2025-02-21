@@ -4,6 +4,11 @@ import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 import Register from "./pages/Register";
 import { Toaster } from 'react-hot-toast';
+import CreateRoom from "./pages/CreateRoom";
+import ProtectedRoute from "./Protected/ProtectedRoute";
+import RoomPage from "./pages/RoomPage";
+
+
 
 function App() {
   return (
@@ -52,6 +57,24 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+
+        <Route path="/room"
+        element={
+          <ProtectedRoute>
+            <CreateRoom/>
+          </ProtectedRoute>
+        }
+        />
+
+        <Route
+            path="/room/:roomId"
+            element={
+              <ProtectedRoute>
+                <RoomPage />
+              </ProtectedRoute>
+            }
+          />
+
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>

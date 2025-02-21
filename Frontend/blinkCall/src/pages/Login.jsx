@@ -31,7 +31,6 @@ const Login = () => {
   
       const userData = {
         accessToken: response.data.data.access,
-        refreshToken: response.data.data.refresh,
         username: response.data.data.username,
         userId: response.data.data.user_id
       };

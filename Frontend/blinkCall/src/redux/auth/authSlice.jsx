@@ -2,7 +2,6 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   accessToken: null,
-  refreshToken: null,
   username: null,
   userId: null,
   isAuthenticated: false,
@@ -23,7 +22,6 @@ export const authSlice = createSlice({
       state.loading = false;
       state.isAuthenticated = true;
       state.accessToken = action.payload.accessToken;
-      state.refreshToken = action.payload.refreshToken;
       state.username = action.payload.username;
       state.userId = action.payload.userId;
       state.error = null;
@@ -34,7 +32,6 @@ export const authSlice = createSlice({
     },
     logout: (state) => {
       state.accessToken = null;
-      state.refreshToken = null;
       state.username = null;
       state.userId = null;
       state.isAuthenticated = false;
@@ -44,9 +41,9 @@ export const authSlice = createSlice({
     },
     updateTokens: (state, action) => {
       state.accessToken = action.payload.accessToken;
-      if (action.payload.refreshToken) {
-        state.refreshToken = action.payload.refreshToken;
-      }
+      // if (action.payload.refreshToken) {
+      //   state.refreshToken = action.payload.refreshToken;
+      // }
     },
     setCsrfToken: (state, action) => {
       state.csrfToken = action.payload;

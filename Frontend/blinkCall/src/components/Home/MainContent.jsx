@@ -1,6 +1,13 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
+
 
 const MainContent = () => {
+    const navigate = useNavigate()
+
+    const handleConnect = () => {
+        navigate('/room');
+    }
     return (
         <main className="flex-grow w-full">
             <div className="flex flex-col items-center justify-center min-h-screen w-full relative bg-cover bg-center bg-no-repeat -mt-16"
@@ -17,8 +24,10 @@ const MainContent = () => {
                     High quality video calls made simple. Join meetings, host virtual events,
                     and stay connected with crystal-clear video and audio.
                 </p>
-                <button className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-lg">
-                    Start Video Call
+                <button className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-lg"
+                onClick={handleConnect}
+                >
+                    Create Video Room
                 </button>
             </div>
         </main>
