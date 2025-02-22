@@ -128,7 +128,7 @@ function RoomPage() {
     useEffect(() => {
       if (!isVideoReady) return;
       const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
-      const WS_URL = `${protocol}://${backendUrl}:8000/ws/room/${roomId}/`;
+      const WS_URL = `${protocol}://${backendUrl}/ws/room/${roomId}/`;
       websocketRef.current = new WebSocket(WS_URL);
 
       websocketRef.current.onopen = () => {
