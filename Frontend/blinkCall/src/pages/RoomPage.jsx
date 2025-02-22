@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 
 function RoomPage() {
   const navigate = useNavigate();
-  const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:8000";
+  const backendUrl = import.meta.env.VITE_WS_URL || "localhost:8000";
     const { roomId } = useParams();
     const localVideoRef = useRef(null);
     const remoteVideoRef = useRef(null);
