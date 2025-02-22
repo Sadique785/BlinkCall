@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 
 function RoomPage() {
   const navigate = useNavigate();
+  const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:8000";
     const { roomId } = useParams();
     const localVideoRef = useRef(null);
     const remoteVideoRef = useRef(null);
@@ -126,8 +127,8 @@ function RoomPage() {
     // Connect to WebSocket and handle messages
     useEffect(() => {
       if (!isVideoReady) return;
-
-      const WS_URL = `ws://localhost:8000/ws/room/${roomId}/`;
+      const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
+      const WS_URL = `${protocol}://${backendUrl}:8000/ws/room/${roomId}/`;
       websocketRef.current = new WebSocket(WS_URL);
 
       websocketRef.current.onopen = () => {
