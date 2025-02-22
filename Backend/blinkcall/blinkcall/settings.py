@@ -31,6 +31,7 @@ DEBUG = True
 # ALLOWED_HOSTS = []
 ALLOWED_HOSTS = [
     'blinkcall.sadique.live',  
+    '3.110.45.198',
     'sadique.live',            
     'localhost',               
     '127.0.0.1',               
