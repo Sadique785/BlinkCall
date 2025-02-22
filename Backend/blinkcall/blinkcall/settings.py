@@ -28,7 +28,16 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'blinkcall.sadique.live',  
+    'sadique.live',            
+    'localhost',               
+    '127.0.0.1',               
+    'blink-call-mu.vercel.app',
+    'blink-call-7r2skzh5u-sadiques-projects-269b0adb.vercel.app'  
+]
+
 
 AUTH_USER_MODEL = 'authentication.User'
 
@@ -64,11 +73,16 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:5173",  
+# ]
+
+
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",  
+    "http://localhost:5173", 
+    "https://blink-call-mu.vercel.app",  
+    "https://blink-call-7r2skzh5u-sadiques-projects-269b0adb.vercel.app"  
 ]
-
-
 
 from datetime import timedelta
 
