@@ -6,51 +6,88 @@ from room.models import Room
 
 
 class RoomConsumer(AsyncWebsocketConsumer):
+
+    ROOM_NOT_FOUND = 4001
+    ROOM_FULL = 4002
+    AUTH_FAILED = 4003 
+
+
     async def connect(self):
-            print('Got into the connect')
-            self.room_id = self.scope['url_route']['kwargs']['room_id']
-            self.room_group_name = f'room_{self.room_id}'
-            print('Got in here', self.room_id)
 
-            # Get room and increase participants
-            room_data = await self.get_room_with_creator()
-            if not room_data:
-                print(f"Room {self.room_id} not found")
-                await self.close(code=4001)
-                return
-            
-            room, creator_id = room_data
-            
-            if room.active_participants >= 2:
-                print(f"Room {self.room_id} is full")
-                await self.accept()
-                await self.send(json.dumps({
-                    'type': 'room_full',
-                    'message': 'This room is already full. Maximum capacity is 2 participants.',
-                    'room_id': self.room_id
-                }))
-                await self.close(code=4002)
-                return
+        print('Got into the connect')
+        self.room_id = self.scope['url_route']['kwargs']['room_id']
+        self.room_group_name = f'room_{self.room_id}'
+        print('Got in here', self.room_id)
 
-            await database_sync_to_async(room.increase_participants)()
-
-            await self.channel_layer.group_add(
-                self.room_group_name,
-                self.channel_name
-            )
-
-            print('Going to connect')
-            await self.accept()
-
+        # Add these authentication checks at the start of connect method
+        if 'error' in self.scope:
+            error_message = self.scope['error']
+            print(f"Authentication error: {error_message}")
+            await self.accept()  # Accept the connection before sending a message
             await self.send(json.dumps({
-                'type': 'connection_success',
-                'message': f'Successfully connected to room {self.room_id}',
-                'current_participants': room.active_participants + 1,
-                'creator_id': creator_id
+                'type': 'authentication_error',
+                'message': f'Authentication failed: {error_message}'
             }))
-        
-            print(f"WebSocket connected: {self.room_id}")
+            await self.close(code=self.AUTH_FAILED)  # Close connection with custom code
+            return
 
+        # Verify user_id exists in scope
+        if 'user_id' not in self.scope:
+            print("No authenticated user found")
+            await self.accept()  # Accept the connection before sending a message
+            await self.send(json.dumps({
+                'type': 'authentication_error',
+                'message': 'No valid token provided. Please log in again.'
+            }))
+            await self.close(code=self.AUTH_FAILED)
+            return
+                    
+        user_id = self.scope['user_id']
+        print(f"Authenticated user_id: {user_id}")
+
+        
+
+        # Get room and increase participants
+        room_data = await self.get_room_with_creator()
+        if not room_data:
+            print(f"Room {self.room_id} not found")
+            await self.close(code=4001)
+            return
+        
+        room, creator_id = room_data
+        
+        if room.active_participants >= 2:
+            print(f"Room {self.room_id} is full")
+            await self.accept()
+            await self.send(json.dumps({
+                'type': 'room_full',
+                'message': 'This room is already full. Maximum capacity is 2 participants.',
+                'room_id': self.room_id
+            }))
+            await self.close(code=4002)
+            return
+
+        await database_sync_to_async(room.increase_participants)()
+
+        await self.channel_layer.group_add(
+            self.room_group_name,
+            self.channel_name
+        )
+
+        print('Going to connect')
+        await self.accept()
+
+        await self.send(json.dumps({
+            'type': 'connection_success',
+            'message': f'Successfully connected to room {self.room_id}',
+            'current_participants': room.active_participants + 1,
+            'creator_id': creator_id
+        }))
+    
+        print(f"WebSocket connected: {self.room_id}")
+
+    
+    
     async def disconnect(self, close_code):
         # Handle different close codes
         if close_code == 4001:

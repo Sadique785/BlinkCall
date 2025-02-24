@@ -92,13 +92,11 @@ axiosInstance.interceptors.request.use(
     }
 );
 
-// Response interceptor
 axiosInstance.interceptors.response.use(
     response => response,
     async error => {
         const originalRequest = error.config;
 
-        // If the error is not 401 or the request was for refreshing token, reject immediately
         if (error.response?.status !== 401 || originalRequest.url === '/auth/token/refresh/') {
             return Promise.reject(error);
         }
