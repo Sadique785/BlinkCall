@@ -25,7 +25,6 @@ export const handleLogout = async (dispatch, logout, persistor, navigate) => {
       throw new Error('Logout failed');
     }
   } catch (error) {
-    console.error("An error occurred during logout: ", error);
     toast.error('Failed to logout');
     return false;
   }

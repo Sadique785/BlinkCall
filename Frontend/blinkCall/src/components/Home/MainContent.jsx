@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import Parent from "./Parent";
 
 
 const MainContent = () => {
@@ -29,6 +30,11 @@ const MainContent = () => {
                 >
                     Create Video Room
                 </button>
+
+               <div className="mt-10">
+               <Parent />
+               </div>
+
             </div>
         </main>
     );
